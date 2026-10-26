@@ -1,26 +1,37 @@
-require('dotenv').config()
-const { exec } = require("child_process");
-const { 
+import dotenv from 'dotenv';
+import { exec }  from "child_process";
+import { 
 	Client,
 	ChannelType,
 	GatewayIntentBits, 
 	EmbedBuilder,
-	Partials
-  } = require('discord.js');
-const https = require("https");
-const WebSocket = require('ws');
-const crypto = require('crypto');
+	Partials,
+  Events
+  }  from 'discord.js';
+import https from "https";
+import WebSocket from 'ws';
+import crypto from 'crypto';
+
+dotenv.config();
 
 const client = new Client({
 	intents: [
 	  GatewayIntentBits.Guilds,
 	  GatewayIntentBits.GuildVoiceStates,
-	  GatewayIntentBits.GuildMessages,
-	  GatewayIntentBits.GuildMembers,
-	  GatewayIntentBits.GuildMessageReactions,
-	  GatewayIntentBits.MessageContent
+	  //GatewayIntentBits.GuildMessages,
+	  //GatewayIntentBits.GuildMembers,
+	  //GatewayIntentBits.GuildMessageReactions,
+	  //GatewayIntentBits.MessageContent
 	]
-  });
+});
+
+import './interactions/index.js';
+import InteractionHandler from './InteractionHandler.js';
+
+
+client.on(Events.InteractionCreate, async interaction => {
+  InteractionHandler.handle(interaction);
+});
 
 
 var stdic = {};
@@ -123,189 +134,15 @@ let jinxes_url = "https://raw.githubusercontent.com/nicholas-eden/townsquare/ref
 let jinxes = "https://media.discordapp.net/attachments/904250103588597790/1427728667089436854/jinx_rules_1.png\nhttps://media.discordapp.net/attachments/904250103588597790/1427728668305915934/jinx_rules_2.png\
 	\n\n(To see in better quality, right click and open in browser, or download the image)"
 
-let new_roles = `[
-  {
-    "id": "8e",
-    "sn": "knight",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Knight",
-    "team": "townsfolk",
-    "ability": "You start knowing 2 players that are not the Demon."
-  },
-  {
-    "id": "fe",
-    "sn": "steward",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Steward",
-    "team": "townsfolk",
-    "ability": "You start knowing 1 good player."
-  },
-  {
-    "id": "a4",
-    "sn": "vizier",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Vizier",
-    "team": "minion",
-    "ability": "All players know who you are. You can not die during the day. If good voted, you may choose to execute immediately."
-  },
-  {
-    "id": "61",
-    "sn": "organgrinder",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Organ Grinder",
-    "team": "minion",
-    "ability": "All players keep their eyes closed when voting & the vote tally is secret. Votes for you only count if you vote."
-  },
-  {
-    "id": "63",
-    "sn": "highpriestess",
-    "edition": "experimental",
-    "setup": false,
-    "name": "High Priestess",
-    "team": "townsfolk",
-    "ability": "Each night, learn which player the Storyteller believes you should talk to most."
-  },
-  {
-    "id": "1b",
-    "sn": "Harpy",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Harpy",
-    "team": "minion",
-    "ability": "Each night, choose 2 players: tomorrow, the 1st player is mad that the 2nd is evil, or both might die."
-  },
-  {
-    "id": "e2",
-    "sn": "plaguedoctor",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Plague Doctor",
-    "team": "outsider",
-    "ability": "If you die, the Storyteller gains a not-in-play Minion ability."
-  },
-  {
-    "id": "da",
-    "sn": "villageidiot",
-    "edition": "experimental",
-    "setup": true,
-    "name": "Village Idiot",
-    "team": "townsfolk",
-    "ability": "Each night, choose a player: you learn their alignment. [+0 to +2 Village Idiots. 1 of the extras is drunk]"
-  },
-  {
-    "id": "11",
-    "sn": "shugenja",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Shugenja",
-    "team": "townsfolk",
-    "ability": "You start knowing if your closest evil player is clockwise or anti-clockwise. If equidistant, this info is arbitrary."
-  },
-  {
-    "id": "44",
-    "sn": "hatter",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Hatter",
-    "team": "outsider",
-    "ability": "If you died today or tonight, the Minion & Demon players may choose new Minion & Demon characters to be."
-  },
-  {
-    "id": "9d",
-    "sn": "Kazali",
-    "edition": "experimental",
-    "setup": true,
-    "name": "Kazali",
-    "team": "demon",
-    "ability": "Each night*, choose a player: they die. [You choose which players are which Minions. -? to +? Outsiders]"
-  },
-  {
-    "id": "6f",
-    "sn": "ojo",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Ojo",
-    "team": "demon",
-    "ability": "Each night*, choose a character: they die. If they are not in play, the Storyteller chooses who dies."
-  },
-  {
-    "id": "1a",
-    "sn": "summoner",
-    "edition": "experimental",
-    "setup": true,
-    "name": "Summoner",
-    "team": "minion",
-    "ability": "You get 3 bluffs. On the 3rd night, choose a player: they become an evil Demon of your choice. [No Demon]"
-  },
-  {
-    "id": "08",
-    "sn": "yaggababble",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Yaggababble",
-    "team": "demon",
-    "ability": "You start knowing a secret phrase. For each time you said it publicly today, a player might die."
-  },
-  {
-    "id": "25",
-    "sn": "ogre",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Ogre",
-    "team": "outsider",
-    "ability": "On your 1st night, choose a player (not yourself): you become their alignment (you don't know which) even if drunk or poisoned."
-  },
-  {
-    "id": "63",
-    "sn": "banshee",
-    "edition": "experimental",
-    "setup": false,
-    "name": "Banshee",
-    "team": "townsfolk",
-    "ability": "If the Demon kills you, all players learn this. From now on, you may nominate twice per day and vote twice per nomination."
-  }
-]`
-
-let new_fabled = `,
-  {
-    "id": "08",
-    "sn": "bootlegger",
-    "setup": false,
-    "name": "Bootlegger",
-    "team": "fabled",
-    "ability": "This script has homebrew characters or rules."
-  },
-  {
-    "id": "5c",
-    "sn": "gardener",
-    "setup": false,
-    "name": "Gardener",
-    "team": "fabled",
-    "ability": "The Storyteller assigns 1 or more players' characters."
-  },
-  {
-    "id": "8f",
-    "sn": "ferryman",
-    "setup": false,
-    "name": "Ferryman",
-    "team": "fabled",
-    "ability": "On the final day, all dead players regain their vote token."
-  }
-]`
-
-let new_jinxes = ""
-
 let responding = true;
 let running_cycle = false;
 
 console.log(lieu_id, "ALRIGHT, STARTING UP!!!");
 
-client.on('ready', function(e) {
-  console.log(lieu_id, `Logged in as ${client.user.tag}!`)
+client.on(Events.ClientReady, async e => {
+  console.log(`Logged in as ${client.user.tag}! Registering commands...`)
+  await InteractionHandler.initialize(client, process.env.TEST_GUILD);
+  console.log("Registered commands!");
 })
 
 async function count_pages(teensy) {
@@ -2350,7 +2187,7 @@ client.on('messageCreate',
 		  return null;
 	  if (!(msg.guildId == moonsties_id && msg.author.id == "1194403683300032612"))
 	  {
-	      if (msg.author.id != msg.guild.ownerId && baseName.trim().substring(0, 4).toLowerCase() !== "(st)" && !msg.member.roles.cache.has("1046984192405282897") && !msg.member.roles.cache.has("1289243075981344892") && !msg.member.roles.cache.has("569684377496190996") && msg.member.user.id != "549986826794827786") {
+	      if (msg.author.id != msg.guild.ownerId && baseName.trim().substring(0, 4).toLowerCase() !== "(st)" && !msg.member.roles.cache.has("1046984192405282897") && !msg.member.roles.cache.has("1289243075981344892") && !msg.member.roles.cache.has("569684377496190996") && msg.member.user.id != lieu_id) {
 	        await respond(msg, "```Only Storytellers and Staff can use this command```")
 	        return null
 	      }
@@ -4004,7 +3841,7 @@ client.on('messageCreate',
   })
 
 
-client.on('voiceStateUpdate', async function(oldState, newState) {
+client.on(Events.VoiceStateUpdate, async function(oldState, newState) {
   if (!responding) {
     return null
   }
@@ -4099,7 +3936,7 @@ client.on('voiceStateUpdate', async function(oldState, newState) {
   }
 });
 
-client.on('guildMemberUpdate', async function(oldMember, newMember) {
+client.on(Events.GuildMemberUpdate, async function(oldMember, newMember) {
   if (!responding) {
     return null
   }
