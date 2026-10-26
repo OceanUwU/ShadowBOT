@@ -1496,9 +1496,6 @@ client.on('messageCreate',
         await respond(msg, "```ShadowBOT is up and running.\nThank you all for your patience :D```")
       }
     }
-    else if (msg.content.trim().toLowerCase() === "*credits" || msg.content.trim().toLowerCase() === "*credit") {
-      await respond(msg, "```ShadowBOT is a bot created by LieutenantDV20 to allow spectators and STs to shadow players, as well as some quality of life commands.\n\nThis bot was only possible with the help of a lot of awesome people, so thanks to the people who helped me test the bot like blue, Zaba, bmessy, melodia and others, and thanks to all the people who suggested great additions to the bot like Walter, Kaz, melodia, Naizea, Inty and others.. and to all the cool people who's supported me and endured listening to me geek out about the bot lol (like blue) <3\nMore thanks to:\nLucas and Sun```")
-    }
     else if (msg.content.trim().toLowerCase().substring(0, 6) === "*vote ") {
       let name = msg.content.trim().substring(6)
       let fnd = -1
