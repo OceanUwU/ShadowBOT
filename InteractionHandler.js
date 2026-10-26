@@ -1,4 +1,4 @@
-import discord, { SlashCommandBuilder, Client, ContextMenuCommandBuilder, ApplicationCommandType, ChatInputCommandInteraction, ContextMenuCommandInteraction, UserContextMenuCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import discord, { SlashCommandBuilder, Client, ContextMenuCommandBuilder, ApplicationCommandType, ChatInputCommandInteraction, ContextMenuCommandInteraction, UserContextMenuCommandInteraction, SlashCommandSubcommandBuilder, AutocompleteInteraction } from 'discord.js';
 
 
 class InteractionHandler {
@@ -8,6 +8,7 @@ class InteractionHandler {
     static commandHandlers = {};
     static contextMenuCommandHandlers = {};
     static userContextMenuCommandHandlers = {};
+    static autocompleteHandlers = {};
     static initialized = false;
 
     /**
@@ -54,6 +55,16 @@ class InteractionHandler {
             throw new Error("Cannot register new commands after initialization!");
         this.userContextMenuCommands.push([commandBuilder, callback]);
     }
+    
+    /**
+     * @param {string} name 
+     * @param {function(AutocompleteInteraction, import('discord.js').AutocompleteFocusedOption):void} callback
+     */
+    static registerAutocomplete(name, callback) {
+        if (this.initialized)
+            throw new Error("Cannot register new interactions after initialization!");
+        this.autocompleteHandlers[name] = callback;
+    }
 
     /**
      * @param {discord.Interaction} interaction 
@@ -78,7 +89,16 @@ class InteractionHandler {
                 if (this.userContextMenuCommandHandlers.hasOwnProperty(interaction.commandId))
                     this.userContextMenuCommandHandlers[interaction.commandId](interaction);
             } else if (interaction.isAutocomplete()) {
-
+                let commandName = interaction.commandName;
+                let subcommand = interaction.options.getSubcommand(true);
+                if (subcommand != null)
+                    commandName += "/" + subcommand;
+                let option = interaction.options.getFocused(true);
+                if (option == null)
+                    return;
+                commandName += "/" + option.name;
+                if (this.autocompleteHandlers.hasOwnProperty(commandName))
+                    this.autocompleteHandlers[commandName](interaction, option);
             } else if (interaction.isButton()) {
 
             } else if (interaction.isSelectMenu()) {
