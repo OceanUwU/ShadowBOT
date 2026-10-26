@@ -1,4 +1,4 @@
-import discord, { SlashCommandBuilder, Client, ContextMenuCommandBuilder, ApplicationCommandType } from 'discord.js';
+import discord, { SlashCommandBuilder, Client, ContextMenuCommandBuilder, ApplicationCommandType, ChatInputCommandInteraction, ContextMenuCommandInteraction, UserContextMenuCommandInteraction } from 'discord.js';
 
 const commands = [];
 const contextMenuCommands = [];
@@ -11,7 +11,7 @@ let initialized = false;
 class InteractionHandler {
     /**
      * @param {SlashCommandBuilder} commandBuilder 
-     * @param {function(discord.Interaction):void} callback
+     * @param {function(ChatInputCommandInteraction):void} callback
      */
     static registerSlashCommand(commandBuilder, callback) {
         if (initialized)
@@ -21,7 +21,7 @@ class InteractionHandler {
 
     /**
      * @param {ContextMenuCommandBuilder} commandBuilder 
-     * @param {function(discord.Interaction):void} callback
+     * @param {function(ContextMenuCommandInteraction):void} callback
      */
     static registerContextMenuCommand(commandBuilder, callback) {
         if (initialized)
@@ -31,7 +31,7 @@ class InteractionHandler {
     
     /**
      * @param {ContextMenuCommandBuilder} commandBuilder 
-     * @param {function(discord.Interaction):void} callback
+     * @param {function(UserContextMenuCommandInteraction):void} callback
      */
     static registerUserContextMenuCommand(commandBuilder, callback) {
         if (initialized)

@@ -84,9 +84,6 @@ var teensies = {
 
 var last_joke = -1
 
-var last_compliment = -1
-var last_insult = -1
-
 var grim_serv = -1
 var grim_link = -1
 var grim_setter = -1
@@ -840,18 +837,6 @@ async function secret_poll(msg, question, items) {
   })
 }
 
-async function nicknameById(msg, id) {
-    const user = await client.users.fetch(id);
-
-    let member = msg.guild.members.cache.get(id);
-
-    if (!member) {
-        member = await msg.guild.members.fetch(id).catch(async (err) => {await msg_user(lieu_id, "what the helly nicknameById didn't work: " + err.message); return null;});
-    }
-
-    return member?.nickname ?? user.globalName ?? user.username ?? "Unknown User";
-}
-
 async function respond(msg, rep) {
   await msg.reply(rep).catch(err => {
     msg_user(lieu_id, "No permission to send messages in that text channel\n")
@@ -1513,70 +1498,6 @@ client.on('messageCreate',
     }
     else if (msg.content.trim().toLowerCase() === "*credits" || msg.content.trim().toLowerCase() === "*credit") {
       await respond(msg, "```ShadowBOT is a bot created by LieutenantDV20 to allow spectators and STs to shadow players, as well as some quality of life commands.\n\nThis bot was only possible with the help of a lot of awesome people, so thanks to the people who helped me test the bot like blue, Zaba, bmessy, melodia and others, and thanks to all the people who suggested great additions to the bot like Walter, Kaz, melodia, Naizea, Inty and others.. and to all the cool people who's supported me and endured listening to me geek out about the bot lol (like blue) <3\nMore thanks to:\nLucas and Sun```")
-    }
-    else if (msg.content.trim().substring(0, 8).toLowerCase() === "*insult " || msg.content.trim().substring(0, 7).toLowerCase() === "*roast ") {
-      let target = msg.mentions.users.first()
-      if (!target) {
-        await respond(msg, "```No user mentions in your command.\nPlease use a player mention after *roast (like *roast @LieutenantDV20)```")
-        return null;
-      }
-      let compliments = [", Are you the drunk? or are you just normally like this?*",
-        ", Must be nice being invincible the first time, YOU FOOL!*",
-        ", I'd rather lose than starpass to you :)*",
-        ", You don't have to be an outsider to be a hindrance to your team!*",
-        ", You don't need to be a cerenovus to make me mad for an entire day!*",
-        ", You're the kind of player to ask your evil team for a 3f3...*",
-        ", If you get sheeped any harder you'll be baaing in no time*",
-        ", Hey I'm the grandmother, and I saw you as the Idiot!*"]
-      let rnd = Math.floor(Math.random() * compliments.length)
-      while (rnd == last_insult) {
-        rnd = Math.floor(Math.random() * compliments.length)
-      }
-      last_insult = rnd
-      await respond(msg, "*" + await nicknameById(msg, target.id) + compliments[rnd]);
-    }
-    else if (msg.content.trim().substring(0, 12).toLowerCase() === "*compliment ") {
-      let target = msg.mentions.users.first()
-      if (!target) {
-        await respond(msg, "```No user mentions in your command.\nPlease use a player mention after *compliment (like *compliment @LieutenantDV20)```")
-        return null;
-      }
-      let compliments = [", You might be the imp, but you'll always be the saint in my eyes.*",
-        ", You're just so cool, you know?*",
-        " is a cool and lovely person <3*",
-        ", A win for you, is a win for me.*",
-        ", Are you the imp? because you starpassed to my heart.*",
-        ", You mayor bounce my troubles away :D*",
-        ", I'll always be there to monk protect you*",
-        ", I might not be the butler, but I'll always vote with you*",
-        ", Our friendship is like a sober sailor, it will never die*",
-        ", The world is a better place with you in it <3*",
-        " is fantastic in every way!*",
-        ", You are as tough as a Soldier, as smart as a Mathematician and as lovely as a Sweetheart!*",
-        ", I don't need a Fortune Teller to know I'm fortunate to have met you.*",
-        ", This game is great, but it's made fun by awesome players like you.*"]
-      let rnd = Math.floor(Math.random() * compliments.length)
-      while (rnd == last_compliment) {
-        rnd = Math.floor(Math.random() * compliments.length)
-      }
-      last_compliment = rnd
-      await respond(msg, "*" + await nicknameById(msg, target.id) + compliments[rnd])
-    }
-    else if (msg.content.trim().substring(0, 12).toLowerCase() === "*complinent ") {
-      if (msg.author.id != "950609031393849445" && msg.author.username.toLowerCase() !== "greg") {
-        return null
-      }
-      let target = msg.mentions.users.first()
-      if (!target) {
-        return null;
-      }
-      let complinents = [", It doesn't matter what role you got, I'm always juggling you as the Sweetheart <3*",
-        ", Call me your butler, because you are my master.*",
-        ", We might not be twins, but we're still a couple.*"]
-      await respond(msg, "*" + target.username + complinents[Math.floor(Math.random() * complinents.length)])
-    }
-    else if (msg.content.trim().toLowerCase() === "*changes" || msg.content.trim().toLowerCase() === "*changelog") {
-      await respond(msg, changes)
     }
     else if (msg.content.trim().toLowerCase().substring(0, 6) === "*vote ") {
       let name = msg.content.trim().substring(6)
@@ -4379,6 +4300,3 @@ var oap_jinx = `**Jinxes: (By LieutenantDV20)**
 - The Good Team wins upon the death of the Demon Player even if they had the **Zombuul** token.
 - If a Final 3 includes a **dead Zombuul**, then the Evil Team wins unless there's an alive Good Player.
 ---------------------------------------------`
-
-var changes =
-  `**Latest Changes:**\n- Added the newly released roles and fables.`;
