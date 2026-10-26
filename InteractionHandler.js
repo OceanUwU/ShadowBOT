@@ -1,22 +1,38 @@
-import discord, { SlashCommandBuilder, Client, ContextMenuCommandBuilder, ApplicationCommandType, ChatInputCommandInteraction, ContextMenuCommandInteraction, UserContextMenuCommandInteraction } from 'discord.js';
+import discord, { SlashCommandBuilder, Client, ContextMenuCommandBuilder, ApplicationCommandType, ChatInputCommandInteraction, ContextMenuCommandInteraction, UserContextMenuCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
 
-const commands = [];
-const contextMenuCommands = [];
-const userContextMenuCommands = [];
-const commandHandlers = {};
-const contextMenuCommandHandlers = {};
-const userContextMenuCommandHandlers = {};
-let initialized = false;
 
 class InteractionHandler {
+    static commands = [];
+    static contextMenuCommands = [];
+    static userContextMenuCommands = [];
+    static commandHandlers = {};
+    static contextMenuCommandHandlers = {};
+    static userContextMenuCommandHandlers = {};
+    static initialized = false;
+
     /**
      * @param {SlashCommandBuilder} commandBuilder 
      * @param {function(ChatInputCommandInteraction):void} callback
      */
     static registerSlashCommand(commandBuilder, callback) {
-        if (initialized)
+        if (this.initialized)
             throw new Error("Cannot register new commands after initialization!");
-        commands.push([commandBuilder, callback]);
+        this.commands.push([commandBuilder, callback]);
+    }
+    /**
+     * @param {SlashCommandBuilder} commandBuilder
+     * @param {Array.<[SlashCommandSubcommandBuilder, function(ChatInputCommandInteraction):void]>} subcommands
+     */
+    static registerCommandGroup(commandBuilder, subcommands) {
+        if (this.initialized)
+            throw new Error("Cannot register new commands after initialization!");
+        let subcommandMap = {};
+        for (let subcommand of subcommands) {
+            commandBuilder.addSubcommand(subcommand[0]);
+            subcommandMap[subcommand[0].name] = subcommand[1];
+            this.commands.push([subcommand[0], subcommand[1]]);
+        }
+        this.commands.push([commandBuilder, subcommandMap]);
     }
 
     /**
@@ -24,9 +40,9 @@ class InteractionHandler {
      * @param {function(ContextMenuCommandInteraction):void} callback
      */
     static registerContextMenuCommand(commandBuilder, callback) {
-        if (initialized)
+        if (this.initialized)
             throw new Error("Cannot register new commands after initialization!");
-        contextMenuCommands.push([commandBuilder, callback]);
+        this.contextMenuCommands.push([commandBuilder, callback]);
     }
     
     /**
@@ -34,9 +50,9 @@ class InteractionHandler {
      * @param {function(UserContextMenuCommandInteraction):void} callback
      */
     static registerUserContextMenuCommand(commandBuilder, callback) {
-        if (initialized)
+        if (this.initialized)
             throw new Error("Cannot register new commands after initialization!");
-        userContextMenuCommands.push([commandBuilder, callback]);
+        this.userContextMenuCommands.push([commandBuilder, callback]);
     }
 
     /**
@@ -44,18 +60,23 @@ class InteractionHandler {
      */
     static handle(interaction) {
         try {
-            if (!initialized)
+            if (!this.initialized)
                 throw new Error("Cannot handle interactions before initialization!");
 
             if (interaction.isChatInputCommand()) {
-                if (commandHandlers.hasOwnProperty(interaction.commandId))
-                    commandHandlers[interaction.commandId](interaction);
+                if (this.commandHandlers.hasOwnProperty(interaction.commandId)) {
+                    let handler = this.commandHandlers[interaction.commandId];
+                    if (typeof(handler) == 'function')
+                        handler(interaction)
+                    else
+                        handler[interaction.options.getSubcommand(true)](interaction)
+                }
             } else if (interaction.isContextMenuCommand()) {
-                if (contextMenuCommandHandlers.hasOwnProperty(interaction.commandId))
-                    contextMenuCommandHandlers[interaction.commandId](interaction);
+                if (this.contextMenuCommandHandlers.hasOwnProperty(interaction.commandId))
+                    this.contextMenuCommandHandlers[interaction.commandId](interaction);
             } else if (interaction.isUserContextMenuCommand()) {
-                if (userContextMenuCommandHandlers.hasOwnProperty(interaction.commandId))
-                    userContextMenuCommandHandlers[interaction.commandId](interaction);
+                if (this.userContextMenuCommandHandlers.hasOwnProperty(interaction.commandId))
+                    this.userContextMenuCommandHandlers[interaction.commandId](interaction);
             } else if (interaction.isAutocomplete()) {
 
             } else if (interaction.isButton()) {
@@ -73,10 +94,10 @@ class InteractionHandler {
      * @param {string} guildOnly
      */
     static async initialize(client, guildOnly) {
-        if (initialized)
+        if (this.initialized)
             throw new Error("Cannot initialize twice!");
 
-        let builders = [...commands, ...contextMenuCommands, ...userContextMenuCommands].map(c => c[0]);
+        let builders = [...this.commands, ...this.contextMenuCommands, ...this.userContextMenuCommands].map(c => c[0]);
         
 
         let registered;
@@ -90,16 +111,18 @@ class InteractionHandler {
 
         registered.each((command, id) => {
             if (command.type == ApplicationCommandType.ChatInput)
-                commandHandlers[id] = commands.find(c => c[0].name == command.name)[1];
+                this.commandHandlers[id] = this.commands.find(c => c[0].name == command.name)[1];
             else if (command.isContextMenuCommand())
-                contextMenuCommandHandlers[id] = contextMenuCommands.find(c => c[0].name == command.commandName)[1];
+                this.contextMenuCommandHandlers[id] = this.contextMenuCommands.find(c => c[0].name == command.commandName)[1];
             else if (command.isUserContextMenuCommand())
-                userContextMenuCommandHandlers[id] = userContextMenuCommands.find(c => c[0].name == command.commandName)[1];
+                this.userContextMenuCommandHandlers[id] = this.userContextMenuCommands.find(c => c[0].name == command.commandName)[1];
         });
-        commands.length = 0;
-        contextMenuCommands.length = 0;
-        userContextMenuCommands.length = 0;
-        initialized = true;
+        this.commands.length = 0;
+        this.contextMenuCommands.length = 0;
+        this.userContextMenuCommands.length = 0;
+        this.initialized = true;
+
+        return registered;
     }
 }
 

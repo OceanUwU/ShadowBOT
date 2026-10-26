@@ -138,8 +138,8 @@ console.log(lieu_id, "ALRIGHT, STARTING UP!!!");
 
 client.on(Events.ClientReady, async e => {
   console.log(`Logged in as ${client.user.tag}! Registering commands...`)
-  await InteractionHandler.initialize(client, process.env.TEST_GUILD);
-  console.log("Registered commands!");
+  let registered = await InteractionHandler.initialize(client, process.env.TEST_GUILD);
+  console.log(`Registered ${registered.size} commands!`);
 })
 
 async function count_pages(teensy) {
