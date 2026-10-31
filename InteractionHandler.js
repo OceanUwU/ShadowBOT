@@ -90,7 +90,7 @@ class InteractionHandler {
                     this.userContextMenuCommandHandlers[interaction.commandId](interaction);
             } else if (interaction.isAutocomplete()) {
                 let commandName = interaction.commandName;
-                let subcommand = interaction.options.getSubcommand(true);
+                let subcommand = interaction.options.getSubcommand(false);
                 if (subcommand != null)
                     commandName += "/" + subcommand;
                 let option = interaction.options.getFocused(true);

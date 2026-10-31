@@ -1,4 +1,4 @@
-import { MessageFlags, SlashCommandBuilder, SlashCommandStringOption, SlashCommandSubcommandBuilder } from 'discord.js';
+import { InteractionContextType, MessageFlags, SlashCommandBuilder, SlashCommandStringOption, SlashCommandSubcommandBuilder } from 'discord.js';
 import InteractionHandler from '../InteractionHandler.js';
 import fetch from 'node-fetch';
 
@@ -20,7 +20,7 @@ async function scriptSearch(type, query, author=null) {
 async function topScriptResults(type, query) {
     let results = await scriptSearch(type, query);
     if (results == null) return [];
-    return results.slice(0, 25).map(r => ({name: `${r.name} by ${r.author}`, value: r.id}));
+    return results.slice(0, 25).map(r => ({name: `${r.name} by ${r.author}`, value: r.script_id.toString()}));
 }
 
 async function getScript(interaction, type) {
@@ -84,7 +84,7 @@ InteractionHandler.registerCommandGroup(new SlashCommandBuilder()
 
 InteractionHandler.registerAutocomplete("script/full/name", async (interaction, option) => {
     try {
-        await interaction.respond(await topScriptResults("Full", option.value));
+        interaction.respond(await topScriptResults("Full", option.value));
     } catch (e) {}
 });
 

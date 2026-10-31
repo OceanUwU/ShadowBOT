@@ -27,6 +27,7 @@
   "dependencies": {
     "discord.js": "^14.26.2",
     "dotenv": "^16.0.1",
+    "flexsearch": "^0.8.212",
     "node-fetch": "^3.3.2"
   }
 }
