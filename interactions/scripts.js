@@ -1,4 +1,4 @@
-import { InteractionContextType, MessageFlags, SlashCommandBuilder, SlashCommandStringOption, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, InteractionContextType, MessageFlags, SlashCommandBuilder, SlashCommandStringOption, SlashCommandSubcommandBuilder } from 'discord.js';
 import InteractionHandler from '../InteractionHandler.js';
 import fetch from 'node-fetch';
 
@@ -20,7 +20,7 @@ async function scriptSearch(type, query, author=null) {
 async function topScriptResults(type, query) {
     let results = await scriptSearch(type, query);
     if (results == null) return [];
-    return results.slice(0, 25).map(r => ({name: `${r.name} by ${r.author}`, value: r.script_id.toString()}));
+    return results.slice(0, 25).map(r => ({name: `${r.name} by ${r.author}`, value: r.pk.toString()}));
 }
 
 async function getScript(interaction, type) {
@@ -32,9 +32,26 @@ async function getScript(interaction, type) {
         let results = await scriptSearch(type, query, author);
         if (results == null || results.length == 0)
             return await interaction.editReply("Could not find that script");
-        id = results[0].script_id;
+        id = results[0].pk;
     }
-    await interaction.editReply(`${scriptSiteBaseUrl}script/${id}`);
+    try {
+        let url = `${scriptSiteBaseUrl}api/scripts/${id}`;
+        let response = await fetch(url);
+        let body = await response.text();
+        let script = JSON.parse(body);
+        if (script == null || !script.hasOwnProperty("script_id"))
+            throw "Script data not found";
+        await interaction.editReply({
+            content: `# [${script.name} (by ${script.author})](<${scriptSiteBaseUrl}script/${script.script_id}>)`,
+            //files: [new AttachmentBuilder().setFile(Buffer.from(JSON.stringify(script.content), 'utf8')).setName(script.name + "_" + script.version + ".json")],
+            components: [new ActionRowBuilder().addComponents(
+                new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel("JSON").setURL(`${scriptSiteBaseUrl}script/${script.script_id}/${script.version}/download`),
+                new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel("PDF").setURL(`${scriptSiteBaseUrl}script/${script.script_id}/${script.version}/download_pdf`),
+            )]
+        });
+    } catch (e) {
+        return await interaction.editReply("Could not find that script");
+    }
 }
 
 InteractionHandler.registerCommandGroup(new SlashCommandBuilder()
