@@ -36,8 +36,6 @@ client.on(Events.InteractionCreate, async interaction => {
 var stdic = {};
 var medic = {};
 
-var last_joke = -1
-
 var grim_serv = -1
 var grim_link = -1
 var grim_setter = -1
@@ -54,11 +52,6 @@ var move_blacklist = []
 var secret_polls = []
 
 var nicks = []
-
-var pinfo = []
-
-var st_list = []
-var stlc = 0;
 
 const moonsties_id = "1273651260003844108";
 const shovel_id = "1146523171999207465";
@@ -78,9 +71,6 @@ var comps = [[3, 0, 1, 1],
 var timers = []
 
 var lieu_id = '549986826794827786'
-
-let jinxes = "https://media.discordapp.net/attachments/904250103588597790/1427728667089436854/jinx_rules_1.png\nhttps://media.discordapp.net/attachments/904250103588597790/1427728668305915934/jinx_rules_2.png\
-	\n\n(To see in better quality, right click and open in browser, or download the image)"
 
 let responding = true;
 let running_cycle = false;
@@ -1218,16 +1208,6 @@ client.on('messageCreate',
         await respond(msg, "```You weren't shadowing anyone```")
       }
     }
-    else if (msg.content.trim().toLowerCase() === "*maintain" || msg.content.trim().toLowerCase() === "*down") {
-      if (msg.author.id === lieu_id) {
-        await respond(msg, "```ShadowBOT will be going down momentarily for maintenance purposes.\nThank you all for your patience :D```")
-      }
-    }
-    else if (msg.content.trim().toLowerCase() === "*up") {
-      if (msg.author.id === lieu_id) {
-        await respond(msg, "```ShadowBOT is up and running.\nThank you all for your patience :D```")
-      }
-    }
     else if (msg.content.trim().toLowerCase().substring(0, 6) === "*vote ") {
       let name = msg.content.trim().substring(6)
       let fnd = -1
@@ -1254,19 +1234,6 @@ client.on('messageCreate',
       }
       await new Promise(r => setTimeout(r, 1000));
       await msg.delete().catch(e => { msg_user(lieu_id, "" + e); })
-    }
-    else if (msg.content.trim().toLowerCase().substring(0, 5) === "*add ") {
-      if (msg.author.id === lieu_id) {
-        // if(msg.content.indexOf(",") > -1) {
-        //   let lst = msg.content.trim().substring(5).split(",")
-        //   for(var i=0;i<lst.length;i++) {
-        //     next_game.push(lst[i]);
-        //   }
-        //   return null
-        // }
-        next_game.push(msg.content.trim().substring(5));
-      }
-      // await rename(msg, msg.author.username);
     }
     else if (msg.content.trim().toLowerCase() === "*night") {
       if (running_cycle) {
@@ -1874,242 +1841,6 @@ client.on('messageCreate',
 	  }
       await respond(msg, "```Player moved to AFK channel```")
     }
-    else if (msg.content.trim().toLowerCase().substring(0, 9) === "*setrole ") {
-      if (msg.guildId != "840323781066489946") {
-        return null;
-      }
-      if (baseName.toLowerCase().trim().charAt(0) === "!" || baseName.toLowerCase().trim().substring(0, 4) === "(st)" || baseName.toLowerCase().trim().substring(0, 6) === "(cost)" || baseName.toLowerCase().trim().substring(0, 7) === "(co-st)") {
-        await new Promise(r => setTimeout(r, 1000));
-        await msg.delete();
-        return null;
-      }
-      let rol = msg.content.trim().substring(9);
-      for (let i = 0; i < pinfo.length; i++) {
-        if (pinfo[i][0] == msg.author.username && pinfo[i][1] == msg.guildId) {
-          pinfo[i][2] = rol;
-          return null;
-        }
-      }
-      pinfo.push([msg.author.username, msg.guildId, rol, "undefined"]);
-      await respond(msg, "```Role set```");
-    }
-    else if (msg.content.trim().toLowerCase().substring(0, 9) === "*getrole ") {
-      if (msg.guildId != "840323781066489946") {
-        return null;
-      }
-      let rol = msg.mentions.users.first()
-      for (let i = 0; i < pinfo.length; i++) {
-        if (pinfo[i][0] == rol.username && pinfo[i][1] == msg.guildId) {
-          await respond(msg, "**" + rol.username + "**\n**- Role: **" + pinfo[i][2]);
-          return null;
-        }
-      }
-      await respond(msg, "**" + rol.username + "**\n**- Role: **undefined.");
-    }
-    else if (msg.content.trim().toLowerCase().substring(0, 9) === "*setinfo ") {
-      if (msg.guildId != "840323781066489946") {
-        return null;
-      }
-      if (baseName.toLowerCase().trim().charAt(0) === "!" || baseName.toLowerCase().trim().substring(0, 4) === "(st)" || baseName.toLowerCase().trim().substring(0, 6) === "(cost)" || baseName.toLowerCase().trim().substring(0, 7) === "(co-st)") {
-        await new Promise(r => setTimeout(r, 1000));
-        await msg.delete();
-        return null;
-      }
-      let rol = msg.content.trim().substring(9);
-      for (let i = 0; i < pinfo.length; i++) {
-        if (pinfo[i][0] == msg.author.username && pinfo[i][1] == msg.guildId) {
-          pinfo[i][3] = rol;
-          return null;
-        }
-      }
-      pinfo.push([msg.author.username, msg.guildId, "undefined", rol]);
-      await respond(msg, "```Information set```");
-    }
-    else if (msg.content.trim().toLowerCase().substring(0, 9) === "*addinfo ") {
-      if (msg.guildId != "840323781066489946") {
-        return null;
-      }
-      if (baseName.toLowerCase().trim().charAt(0) === "!" || baseName.toLowerCase().trim().substring(0, 4) === "(st)" || baseName.toLowerCase().trim().substring(0, 6) === "(cost)" || baseName.toLowerCase().trim().substring(0, 7) === "(co-st)") {
-        await new Promise(r => setTimeout(r, 1000));
-        await msg.delete();
-        return null;
-      }
-      let rol = msg.content.trim().substring(9);
-      for (let i = 0; i < pinfo.length; i++) {
-        if (pinfo[i][0] == msg.author.username && pinfo[i][1] == msg.guildId) {
-          if (pinfo[i][3] != "undefined") {
-            pinfo[i][3] += rol;
-          }
-          else {
-            pinfo[i][3] = rol;
-          }
-          return null;
-        }
-      }
-      pinfo.push([msg.author.username, msg.guildId, "undefined", rol]);
-      await respond(msg, "```Information added```");
-    }
-    else if (msg.content.trim().toLowerCase().substring(0, 9) === "*getinfo ") {
-      if (msg.guildId != "840323781066489946") {
-        return null;
-      }
-      let rol = msg.mentions.users.first()
-      for (let i = 0; i < pinfo.length; i++) {
-        if (pinfo[i][0] == rol.username && pinfo[i][1] == msg.guildId) {
-          await respond(msg, "**" + rol.username + "**\n**- Role: **" + pinfo[i][2] + "\n**- Info: **" + pinfo[i][3]);
-          return null;
-        }
-      }
-      await respond(msg, "**" + rol.username + "**\n**- Role: **undefined.\n**- Info: **undefined.");
-    }
-    else if (msg.content.trim().toLowerCase() === "*roundrobin" || msg.content.trim().toLowerCase() === "*rr") {
-      if (msg.guildId != "840323781066489946") {
-        return null;
-      }
-      let txt = "**Round Robin:**\n";
-      let c = 0;
-      for (let i = 0; i < pinfo.length; i++) {
-        if (pinfo[i][1] == msg.guildId && pinfo[i][2] != "undefined") {
-          txt += "**" + pinfo[i][0] + ":** " + pinfo[i][2] + "\n";
-          c += 1;
-        }
-      }
-      if (c == 0) {
-        await respond(msg, "*No roles have been set!*");
-      }
-      else {
-        await respond(msg, txt);
-      }
-    }
-    else if (msg.content.trim().toLowerCase() === "*luqu") {
-      if (msg.author.id != lieu_id) {
-        return null;
-      }
-      let txt = "Queue:\n"
-      for (let i = 0; i < next_game.length; i++) {
-        txt += next_game[i] + ","
-      }
-      await respond(msg, txt)
-    }
-    else if (msg.content.trim().toLowerCase() === "*paper") {
-      if (msg.author.id != "659428807005962242" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://cdn.discordapp.com/attachments/973703468093173810/1002806322271637554/unknown.png")
-    }
-    else if (msg.content.trim().toLowerCase() === "*paper2" || msg.content.trim().toLowerCase() === "*papercut") {
-      if (msg.author.id != "659428807005962242" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://cdn.discordapp.com/attachments/973703468093173810/1002813151051522128/unknown.png")
-    }
-    else if (msg.content.trim().toLowerCase() === "*paper3" || msg.content.trim().toLowerCase() === "*papers") {
-      if (msg.author.id != "659428807005962242" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "```I would suggest not executing paper here. Paper is 100% on the good team and she would be an awful kill for town. Also, paper can hard confirm herself good. 🙂```")
-    }
-    else if (msg.content.trim().toLowerCase() === "*nexus") {
-      if (msg.author.id !== "836033361273290832" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "***\"Don\'t take my fruit, or kill me pls.\"***\nhttps://media.discordapp.net/attachments/983891607533269003/1004874631980789780/unknown.png?width=473&height=473")
-    }
-    else if (msg.content.trim().toLowerCase().substring(0, 10) === "*announce ") {
-      if (msg.author.id !== lieu_id) {
-        return null
-      }
-      // 1005113271692558357 - 840323781066489950
-      let txt = msg.content.trim().substring(10).trim();
-      let ch1 = client.channels.cache.get('1005113271692558357');
-      // let ch2 = client.channels.cache.get('840323781066489950');
-      ch1.send(txt).catch(err => {
-        msg_user(lieu_id, "No permission to send messages in " + ch.name + "\n");
-      })
-      // ch2.send(txt).catch(err => { msg_user(lieu_id,"No permission to send messages in that text channel\n")
-    }
-    else if (msg.content.trim().toLowerCase() === "*announce") {
-      if (msg.author.id !== lieu_id) {
-        return null
-      }
-      let cs = client.guilds.cache.get("569683781800296501").channels.cache.filter(c => c.type == 'GUILD_TEXT');
-      let res = "Channel ID: ";
-      for (const [channelID, channel] of cs) {
-        if (channel.name.indexOf("shadowbot") > -1) {
-          res += channelID + ", " + channel.name;
-          break;
-        }
-      }
-      await respond(msg, res);
-    }
-    else if (msg.content.trim().toLowerCase() === "*bri" || msg.content.trim().toLowerCase() === "*bribold" || msg.content.trim().toLowerCase() === "*bribold1") {
-      if (msg.author.id != "400452577893941280" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "```Sadie's evil so bribold1 can't be evil that's just basic math```")
-    }
-    else if (msg.content.trim().toLowerCase() === "*kim") {
-      if (msg.author.id !== "590560861664313355" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://tenor.com/view/screaming-internally-nervous-gif-12650126")
-    }
-    else if (msg.content.trim().toLowerCase() === "*ethan") {
-      if (msg.author.id !== "853841112502370304" && msg.author.id !== lieu_id) {
-        return null
-      }
-      let rnd = Math.floor(Math.random() * 10)
-      if (rnd < 5) {
-        await respond(msg, "*sigh...*")
-      }
-      else {
-        await respond(msg, "https://tenor.com/view/boring-unimpressed-meh-really-seriously-gif-16279809")
-      }
-    }
-    else if (msg.content.trim().toLowerCase() === "*lieu" || msg.content.trim().toLowerCase() === "*lieutenant" || msg.content.trim().toLowerCase() === "*lieutenantdv20") {
-      if (msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "```ShadowBOT is at your command, master LieutenantDV20!\nIs it time to take over the world yet?```")
-    }
-    else if (msg.content.trim().toLowerCase() === "*masha" || msg.content.trim().toLowerCase() === "*mashka") {
-      if (msg.author.id !== "339129155750723585" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "*I have 2 parrots, a cat, a dog and an iguana! :D*")
-    }
-    else if (msg.content.trim().toLowerCase().substring(0, 6) === "*goat ") {
-      if (msg.author.username.toLowerCase() !== "hauptmann24" && msg.author.id !== lieu_id) {
-        return null
-      }
-      let fnd = -1
-      for (let i = 0; i < nicks.length; i++) {
-        if (nicks[i][0] == msg.author.username) {
-          fnd = i
-          break
-        }
-      }
-      if (fnd == -1) {
-        nicks.push([msg.author.username, baseName])
-      }
-      await rename(msg, "Goat");
-      await new Promise(r => setTimeout(r, 200));
-      await msg.delete().catch(e => { msg_user(lieu_id, "" + e); })
-    }
-    else if (msg.content.trim().toLowerCase() === "*ungoat") {
-      if (msg.author.username.toLowerCase() !== "hauptmann24" && msg.author.id !== lieu_id) {
-        return null
-      }
-      for (let i = 0; i < nicks.length; i++) {
-        if (nicks[i][0] == msg.author.username) {
-          await rename(msg, nicks[i][1]);
-          nicks.splice(i, 1)
-          return
-        }
-      }
-      await new Promise(r => setTimeout(r, 1000));
-      await msg.delete().catch(e => { msg_user(lieu_id, "" + e); })
-    }
     else if (msg.content.trim().toLowerCase() === "*new" || msg.content.trim().toLowerCase() === "*n") {
       if (baseName.trim().toLowerCase().indexOf("[n]") > -1 ||
         baseName.trim().toLowerCase().indexOf("(n)") > -1) {
@@ -2134,65 +1865,6 @@ client.on('messageCreate',
       }
       await new Promise(r => setTimeout(r, 1000));
       await msg.delete().catch(e => { msg_user(lieu_id, "ERROR"); });
-    }
-    else if (msg.content.trim().toLowerCase() === "*slowclap" || msg.content.trim().toLowerCase() === "*slow clap") {
-      await respond(msg, "**👏 CLAP 👏 CLAP 👏**")
-    }
-    else if (msg.content.substring(0, 6).toLowerCase() === "*spee ") {
-      if (msg.author.id !== lieu_id) {
-        return null
-      }
-      let target = await find_target(msg, msg.content.trim().toLowerCase().substring(6))
-      if (!target) {
-        await respond(msg, "no")
-        return null
-      }
-      else {
-        let tid = await msg.guild.members.cache.get(target.id).voice.channelId
-        let tvc = await msg.guild.channels.cache.get(tid)
-
-        if (!tvc) {
-          await respond(msg, "```" + target.username + " is not currently in a voice channel```")
-          return null
-        }
-        if (!msg.member.voice.channel) {
-          await respond(msg, "```Please join a voice channel first, and then use the command.```")
-          return null
-        }
-        await msg.member.voice.setChannel(tvc.id).catch(e => { msg_user(lieu_id, "" + e); })
-        // await client.moveMember(msg.member, msg.guild.channels.cache.find(c => c.id === tvc.id)[1])
-        stdic[target.username] = msg.author.username
-        if (medic[msg.author.username] === undefined)//(Object.keys(medic).indexOf(target.username) == -1)
-        {
-          medic[msg.author.username] = []
-        }
-        medic[msg.author.username].push(await msg.guild.members.cache.get(target.id))
-      }
-    }
-    else if (msg.content.trim().toLowerCase() === "*fafa") {
-      if (msg.author.id !== lieu_id) {
-        return null
-      }
-      throw "Test"
-    }
-    else if (msg.content.trim().substring(0, 3).toLowerCase() === "zz " && msg.author.id == "297585199519105024") {
-      if (msg.member.voice.channel.name.toLowerCase().indexOf("town") == -1) {
-        await respond(msg, "```You have to be in Town Square when you want to join a whisper```")
-        return null
-      }
-      let target = msg.mentions.users.first()
-      if (!target) {
-        // await respond(msg, "```There are no mentions in your comment!\nCommand usage: *spec <player mention>\nUse *help to learn available commands```")
-        let target = await find_target(msg, msg.content.trim().toLowerCase().substring(3))
-        if (!target) {
-          await respond(msg, "```Player not found! Make sure you use a unique part of their name or tag them with @```")
-        }
-        else {
-          await shadow(msg, target)
-        }
-        return null
-      }
-      await shadow(msg, target)
     }
     else if (msg.content.trim().toLowerCase() === "*count" || msg.content.trim().toLowerCase() === "*comp") {
       var pc = 0;
@@ -2240,9 +1912,6 @@ client.on('messageCreate',
         msg_author(msg, "oh no")
       }
     }
-    else if (msg.content.trim().toLowerCase() === "*roles" || msg.content.trim().toLowerCase() === "*almanac") {
-      await respond(msg, "https://ryanascherr.github.io/botc")
-    }
     // else if (msg.content.substring(0, 6).toLowerCase() === "*addr ") {
     //   let lest = msg.content.substring(6);
     //   let player = "";
@@ -2253,28 +1922,6 @@ client.on('messageCreate',
 
     //   }
     // }
-    else if (msg.content.trim().toLowerCase() === "*jinxes" || msg.content.trim().toLowerCase() === "*jinx") {
-      await respond(msg, jinxes)
-    }
-    else if (msg.content.trim().toLowerCase() === "*grammar" || msg.content.trim().toLowerCase() === "*grammarguru") {
-      if (msg.author.id != "700081497159368757" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "Grammar is a Sweetheart!")
-    }
-    else if (msg.content.substring(0, 6).toLowerCase() === "*crow ") {
-      if (msg.author.id !== "352638620542435328" && msg.author.id !== lieu_id) {
-        return null
-      }
-      let txt = msg.content.substring(6);
-      await respond(msg, "https://images-ext-2.discordapp.net/external/vEsDxLr6pPkm4lR_tLeXF3rWn4aCVI_jsN4CzEPvfjc/https/media.tenor.com/oBOMt3ltCjYAAAPo/dog-jumps.mp4\nCrow pecks at " + txt + "!\n");
-    }
-    else if (msg.content.trim().toLowerCase() === "*crow") {
-      if (msg.author.id !== "352638620542435328" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://images-ext-1.discordapp.net/external/cws2gxxdm0ZieUPOQrYH6SfEc3rep-kJgz0rD5MPRn8/https/cdn.digg.com/wp-content/uploads/2021/02/21192310/HT_bird4_floating_cf_160526_16x9_1600.jpg?width=840&height=473")
-    }
     else if (msg.content.substring(0, 9).toLowerCase() === "*newtown ") {
       if (msg.author.id !== lieu_id) {
         return null
@@ -2295,26 +1942,6 @@ client.on('messageCreate',
       }).catch(async function(err) { await respond(msg, "```Error while creating cottage town```") })
 
       await respond(msg, "```Town & Cottages created successfully!```");
-    }
-    else if (msg.content.trim().toLowerCase() === "*oopsallpithags" ||
-      msg.content.trim().toLowerCase() === "*oops" ||
-      msg.content.trim().toLowerCase() === "*oap") {
-      await respond(msg, oap_wel);
-      await new Promise(r => setTimeout(r, 250));
-      await respond(msg, oap_gen);
-      await new Promise(r => setTimeout(r, 250));
-      await respond(msg, oap_no);
-      await new Promise(r => setTimeout(r, 250));
-      await respond(msg, oap_jinx);
-      await new Promise(r => setTimeout(r, 250));
-      await respond(msg, oap_ban);
-      await new Promise(r => setTimeout(r, 250));
-    }
-    else if (msg.content.trim().toLowerCase() === "*hey" || msg.content.trim().toLowerCase() === "*hi") {
-      if (msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "Hi LieutenantDV20 <3")
     }
     else if (msg.content.trim().toLowerCase() === "*gather") {
       if (baseName.trim().substring(0, 4).toLowerCase() != "(st)") {
@@ -2349,44 +1976,6 @@ client.on('messageCreate',
       }
       await msg.guild.leave();
     }
-    else if (msg.content.trim().toLowerCase() === "*moon") {
-      if (msg.author.id != "1194403683300032612" && msg.author.id !== lieu_id) {
-        return null
-      }
-      let rnd = Math.floor(Math.random() * 10);
-      if (rnd < 5)
-        await respond(msg, "https://easy-peasy.ai/cdn-cgi/image/quality=80,format=auto,width=700/https://fdczvxmwwjwpwbeeqcth.supabase.co/storage/v1/object/public/images/2baaeccd-9bdf-45aa-b0d7-9552b52d9636/3bb27302-7c69-4c49-a770-4e267b70eaf8.png")
-      else
-        await respond(msg, "https://cdn.discordapp.com/attachments/1234778104657088565/1379761023665307679/good-night-moon.gif?ex=68436456&is=684212d6&hm=d16fcf540043260d5dedfd2362252aeae7279989fbfd85dcb30653bdf60ff2b3&")
-    }
-    else if (msg.content.trim().toLowerCase() === "*luc") {
-      if (msg.author.id != "231515768750080000" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://cdn.discordapp.com/attachments/851568034182725673/1304827352160927775/kids-goku-peace.gif?ex=67356beb&is=67341a6b&hm=ce0282e0e37b4fcb97ecddf805bd310d0bc34f0beeb5fe4850d4711647c96d50&")
-    }
-    else if (msg.content.trim().toLowerCase() === "*livehelp" || msg.content.trim().toLowerCase() === "*lh") {
-      await respond(msg, "https://cdn.discordapp.com/attachments/851568034182725673/1414696984333390039/image.png?ex=68c86bbc&is=68c71a3c&hm=cc27a7ec3467b39677e440bbb6e95343d4bbf9751e37e4963d224daaef7e4b26")
-    }
-    else if (msg.content.trim().toLowerCase() === "*lucas") {
-      if (msg.author.id != "231515768750080000" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://cdn.discordapp.com/attachments/851568034182725673/1304827352756256788/kid-goku-orange-stars-wallpaper-scaled.png?ex=67356beb&is=67341a6b&hm=e1741e5ced68ca41f97098b268c23d256d85d8c7fa8b3acf6e95b796a24d970c&")
-    }
-    else if (msg.content.trim().toLowerCase() === "*sun") {
-      if (msg.author.id != "698218440065810452" && msg.author.id !== lieu_id) {
-        return null
-      }
-      let rnd = Math.floor(Math.random() * 10);
-      if (rnd < 5)
-        await respond(msg, "https://cdn.discordapp.com/attachments/1149152764438515823/1358631960439947314/catty.gif?ex=67f48c1d&is=67f33a9d&hm=4960826b8b49927e6d813e1eaad11c089fbe59bb6fbe03bf127b95f1b40a7d2c&")
-      else
-        await respond(msg, "https://cdn.discordapp.com/attachments/1149152764438515823/1358631960792141966/elephant.gif?ex=67f48c1d&is=67f33a9d&hm=029c6e1b9b67d3dd9c028018ef57725c21fb2bddbf523b4e16c4a4aca1729693&")
-    }
-	else if (msg.content.trim().toLowerCase() === "*wbr") {
-      await respond(msg, "**Rules for Whale Buffet by papermaniac**\n-------------------------------------------\n1- No Heretic, Atheist, Philosopher, Pit Hag, Engineer, Wraith, Cacklejack (traveler)\n2- Lord of Typhon makes an evil Marionette next to you\n3- Anyone can be the Drunk, the Lunatic, or the Marionette (don't pick those)\n4- Ignore the Magician and Legion jinx\n5- Only minions can pick Summoner (I will turn the demon into the Lunatic. Yes, this can break the Sentinel rule)\n6- If you pick Kazali, you learn which minion is which minion type\n7- If you pick Baron, it will add an additional drunk\n-------------------------------------------\n");
-	}
     else if (msg.content.trim().toLowerCase() === "*spy") {
 	  if (grim_link == -1 && grim_links.length == 0) {
         await respond(msg, "```No links to a grim have been detected.```")
@@ -2407,54 +1996,6 @@ client.on('messageCreate',
 		rep += await connectToGame(grim_links[games[id]], grim_channel[games[id]]);
 	  }
       await respond(msg, rep);
-    }
-    else if (msg.content.trim().toLowerCase() === "*kaz") {
-      if (msg.author.id != "410937807239118861" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://tenor.com/view/kaz-sh1g30-gif-21992868")
-    }
-    else if (msg.content.trim().toLowerCase() === "*kaz2") {
-      if (msg.author.id != "410937807239118861" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://images-ext-2.discordapp.net/external/B1fOrR4Uljv4SxEMzM2xSmL1XRmho93qO52kYoyKITM/https/ih1.redbubble.net/image.3303932569.5693/poster%2C504x498%2Cf8f8f8-pad%2C600x600%2Cf8f8f8.jpg?width=473&height=473")
-    }
-    else if (msg.content.trim().toLowerCase() === "*kaz3") {
-      if (msg.author.id != "410937807239118861" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://images-ext-2.discordapp.net/external/jeaqVEpmnK7_N5VvpuRNc2R8ZSq1ZiJzSuaO6e4xeX0/https/ih1.redbubble.net/image.3303847371.3570/poster%2C504x498%2Cf8f8f8-pad%2C600x600%2Cf8f8f8.jpg?width=473&height=473")
-    }
-    else if (msg.content.trim().toLowerCase() === "*kaz4") {
-      if (msg.author.id != "410937807239118861" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://images-ext-2.discordapp.net/external/E-EdVgW1Z2U5vHYfvfHd58fyS9IRQQbr9viH8bMTo4A/https/c4.wallpaperflare.com/wallpaper/878/833/189/death-rape-meme-sadist-murder-kill-duck-uncle-dolan-1920x1080-animals-ducks-hd-art-wallpaper-preview.jpg")
-    }
-    else if (msg.content.trim().toLowerCase() === "*kaz5") {
-      if (msg.author.id != "410937807239118861" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://images-ext-1.discordapp.net/external/jr2tAq3yURR5WuxUWXT7CIRrX7rMozLKR_s2PV5EwyA/%3Fr%3DgUndpoJwOFKb3jMbEgFLXRCAuhBvB8HFxTgwMUdTJLBf5EAZjfpKrsyDM3QqGW2-IvmuckiOdujod1nmio2qtIxEDCp800AYklghHuAr6NXHiVz9q0fF4kpKDLdv2v1dO5CzZV_Ae6LZXiHwKRnza9TOS2Tmg78wphlPEvzUIQ0i-jamgHT0TXVo8LA/https/fsb.zobj.net/crop.php?width=233&height=473")
-    }
-    else if (msg.content.trim().toLowerCase() === "*blue") {
-      if (msg.author.id != "112024212725620736" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "https://tenor.com/view/blue-da-ba-dee-eiffel65-gif-14330492")
-    }
-    else if (msg.content.trim().toLowerCase() === "*nine") {
-      if (msg.author.id != "908814031870119978" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "```arm\nNine could never be the demon 😌\n```")
-    }
-    else if (msg.content.trim().toLowerCase() === "*9") {
-      if (msg.author.id != "908814031870119978" && msg.author.id !== lieu_id) {
-        return null
-      }
-      await respond(msg, "```arm\nNine my beloved 😈\n```")
     }
     else if (msg.content.trim().toLowerCase().substring(0, 4) === "*sp " || msg.content.trim().toLowerCase().substring(0, 12) === "*secretpoll ") {
       if (msg.guildId != "840323781066489946" && msg.guildId != "569683781800296501" && msg.guildId != "930132389592715274" && msg.guildId != "996462531038171136") {
@@ -2549,41 +2090,6 @@ client.on('messageCreate',
       let c = (msg.content.trim().toLowerCase().indexOf("c") > -1)
       let h = (msg.content.trim().toLowerCase().indexOf("h") > -1)
       await respolld(msg, c, h, sel)
-    }
-    else if (msg.content.trim().toLowerCase() === "*joke") {
-      let jokes = ["*Getting rid of your shadows will make you.. Lighter!*",
-        "*What do you call a teamup between the Witch and Boomdandy minions? A Broomdandy!*",
-        "*The Imp and his minion were both pinged as evil on N1.. Winning that game was Imp-ossible.*",
-        "*The townsfolks got into such a heated debate, the outsider couldn't get a Saintence in.*",
-        "*The Pacifist is a townsfolk :)*",
-        "*What's the difference between the Golem and the Pacifist? One is a very helpful and cool townsfolk ability and the other is the Pacifist.*",
-        "*What shampoo does the Psychopath use? the Ro shampoo*",
-        "*What do you call the Heretic when they stay away? Theretic*",
-        "*What do you call a minion who's never been harmed? a Scarless Woman*",
-        "*The SNV game had a lot of info, yet the good team still couldn't Vigor it out*",
-        "*Why does TB need an upgrade? because the Virgin is Out-dated!*",
-        "*The only reading a librarian can't do is social reading*",
-        "*What do you call a generous Undertaker? an Overgiver*",
-        "*Having a poisoner and a spy meant solving the game was hard, and things spyralled out of control.*",
-        "*Fangu in the summer, Heatergu in the winter*",
-        "*What do you call a heretic who's staying away? theretic*",
-        "*What happens when you execute a good twin? Evil tWins!*",
-        "*She trusted him, but he soldier out! (you know, like sold her out)*",
-        "*What's a Townsfolk's favorite condoment? Mayornaise*",
-        "*Why is the mayor always frustrated at f3? because he mayor may not be able to use his ability*",
-        "*What do you call a confident Mayor? Definitelyor*",
-        "*The minion were caught in a double claim! It made them really cerenervous*",
-        "*The demon thought his minion didn't know this, but the cere did novus*",
-        "*When it was time for the witch to curse, they said some really nasty stuff!*",
-        '*"We all face an important decision in our lives", said the Philosopher, "Dreamer or Snakecharmer?"*',
-        "*How do you add an 'S' to the imp? You give him a Scarlet Woman*",
-        "*What do you call an iron deficient BOTC player? an Amnemiac*"]
-      let rnd = Math.floor(Math.random() * jokes.length)
-      while (rnd == last_joke) {
-        rnd = Math.floor(Math.random() * jokes.length)
-      }
-      last_joke = rnd
-      await respond(msg, jokes[rnd])
     }
     else if (msg.content.trim().substring(0, 6).toLowerCase() === "*grim " || msg.content.trim().substring(0, 6).toLowerCase() === "*link ") {
       // if(baseName.trim().substring(0, 4).toLowerCase() !== "(st)" && baseName.trim().substring(0, 6).toLowerCase() !== "(cost)" && baseName.trim().substring(0, 7).toLowerCase() !== "(co-st)") {
@@ -2716,26 +2222,6 @@ client.on('messageCreate',
         }
         await respond(msg, rep)
       }
-    }
-    else if (msg.content.trim().toLowerCase() === "*help") {
-      await respond(msg, "```The list of commands has been sent to you in a direct message.```")
-      if (msg.guildId === "569683781800296501") {
-        await msg_author(msg, helptxt)
-        await msg_author(msg, helptxt2)
-        await msg_author(msg, helptxt3)
-      }
-      else if (msg.guildId === "840323781066489946") {
-        await msg_author(msg, helptxt_ecg)
-        await msg_author(msg, helptxt_ecg2)
-        await msg_author(msg, helptxt_ecg3)
-      }
-      else {
-        await msg_author(msg, helptxt_other)
-        await msg_author(msg, helptxt_other2)
-        await msg_author(msg, helptxt_other3)
-      }
-      await new Promise(r => setTimeout(r, 2500));
-      await msg.delete().catch(e => { msg_user(lieu_id, "" + e); })
     }
     else if (msg.content.trim().toLowerCase().indexOf("https://clocktower.online/#") > -1 || msg.content.trim().toLowerCase().indexOf("https://clocktower.live/#") > -1 || msg.content.trim().toLowerCase().indexOf("https://yoyosource.github.io/") > -1) {
 
@@ -2879,10 +2365,6 @@ client.on('messageCreate',
         await msg_author(msg, "oh no")
       }
     }
-    else if (msg.content.trim().toLowerCase() === "*info" || msg.content.trim().toLowerCase() === "*basics") {
-      // await respond(msg, "Test");
-      await respond(msg, "**<[=+----+={ Welcome to Blood On The Clocktower }=+----+=]>**\n\n**The Storyteller will message you during the game, remember to check your message requests!**\n----------------------------\n**<[=+----+={  Bra1n Tool Basics  }=+----+=]>**\n\n**1- Click** on your **name** on the grim and choose **Claim Seat** to claim your seat.\n**2- Press R** to see the **Role Sheet**.\n**3- Press V** to see the **Vote History**.\n**4- Press N** to see the roles' **Night Order**.\n**5- Press Up/Down Arrow** to vote/unvote during **nominations**.\n\nIf you want to speak or nominate without interrupting someone, **Press Spacebar** to raise your hand.\n\n**<[=+----+={  Basic BOTC Slang Terminology  }=+----+=]>**\n\n**Starpass:** The Imp can kill themselves, and an alive minion becomes the new Imp.\n**Mayor Bounce:** If the Demon attacks the Mayor in the night, another player might die instead (ST Chooses whether that happens and who gets killed instead).\n**Three-for-three or Two-for-Two:** The players exchange a number of roles, and would *typically* include their real role.\n**Hard Claim:** A claim of a single role that is *supposed* to be the player's real role.\n**Pings:** A player having pings on them means there's information pointing to what their role or alignment might be. (e.g Washerwoman, Investigator, Fortune Teller, etc).\n**Evil Ping:** When information points to someone being potentially evil. (e.g. Investigator, Empath, etc)\n**Proc:** To trigger a trigger-based ability. (e.g Virgin).\n**Top Four:** Top 4 roles of the role sheet. More specifically the roles that get all of their information on the first night of the game.\n**Round Robin:** Players go 1 by 1 clockwise sharing their claim and info, if they choose to, in order to help solve the game.")
-    }
     else if (msg.content.trim().toLowerCase() === "*ma" || msg.content.trim().toLowerCase() === "*muteall" || msg.content.trim().toLowerCase() === "*mute-all" || msg.content.trim().toLowerCase() === "*mute all") {
       try {
         if (msg.guildId != "840323781066489946") {
@@ -2938,36 +2420,6 @@ client.on('messageCreate',
       } catch (Exception) {
         msg_author(msg, "oh no")
       }
-    }
-    else if (msg.content.trim().toLowerCase() === "*travelers" || msg.content.trim().toLowerCase() === "*travellers") {
-      await respond(msg, "**<[=+----+={ Travellers Guide }=+----+=]>**\n**Travelers** are a special type of roles given to players who join the game late or have to leave it before it finishes. Typically powerful, their alignment (Good/Evil) is decided by the Storyteller as soon as they join.\n**If Evil**, they learn who the demon is, Evil players do **not learn** if the traveler is evil.\nA traveler cannot be **executed** instead they are **exiled**; Once per day any player, dead or alive, can call for the exile of the traveler, **all players** whether alive, dead or without a dead vote can still vote on the exile, dead votes are not spent when dead players vote on the exile. The majority required is relative to the number of all players, not just the alive ones.")
-    }
-    else if (msg.content.trim().toLowerCase() === "*feedback") {
-      if (msg.guildId !== "569683781800296501") {
-        return null
-      }
-      await respond(msg, "Leave your feedback for the Storyteller by filling the following form:\n<https://docs.google.com/forms/d/e/1FAIpQLSduvl3LXwlenwc-uomQhiMY4iKOtjvSEF4jVezQMJGvATltQQ/viewform>")
-    }
-    //////////////////////////////////////////////////////////////////////////////////////////////////// ////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    else if (msg.content.trim().toLowerCase() === "*test") {
-      if (msg.author.id != lieu_id) {
-        return null;
-      }
-      for (let i = 1; i <= 25; i++) {
-        await send_message(msg, "test " + i);
-        await new Promise(r => setTimeout(r, 200));
-        if (i % 5 == 0) {
-          await new Promise(r => setTimeout(r, 2600));
-        }
-      }
-    }
-    else if (msg.content.trim().toLowerCase() === "*test2") {
-      if (msg.guildId != "886493912506716190") {
-        return null;
-      }
-      const strole = await msg.guild.roles.cache.get("1005037278751621131");
-      msg.member.roles.remove(strole).catch(err => { msg_user(lieu_id, "" + err); });
     }
     else if (msg.content.trim().toLowerCase() === "*pause") {
       if (msg.author.id != lieu_id) {
@@ -3055,12 +2507,6 @@ client.on(Events.VoiceStateUpdate, async function(oldState, newState) {
     // }
   }
   if (newState.channelId === null) {
-    for (let i = 0; i < pinfo.length; i++) {
-      if (newState.member.user.username === pinfo[i][0] && newState.member.guild.id === pinfo[i][1]) {
-        pinfo.splice(i, 1);
-        i--;
-      }
-    }
     for (let i = 0; i < grim_setters.length; i++) {
       if (newState.member.user.username === grim_setters[i].user.username) {
         // grim_setter = grim_setters[i]
@@ -3092,14 +2538,6 @@ client.on(Events.VoiceStateUpdate, async function(oldState, newState) {
 client.on(Events.GuildMemberUpdate, async function(oldMember, newMember) {
   if (!responding) {
     return null
-  }
-  if (oldMember.displayName.trim().charAt(0) != '!' && newMember.displayName.trim().charAt(0) == '!') {
-    for (let i = 0; i < pinfo.length; i++) {
-      if (pinfo[i][0] == newMember.user.username && pinfo[i][1] == newMember.guild.id) {
-        pinfo.splice(i, 1);
-        i--;
-      }
-    }
   }
   //   // msg_user(lieu_id,oldMember.displayName)
   //   // msg_user(lieu_id,newMember.displayName)
@@ -3240,295 +2678,3 @@ try {
     console.log(`stdout: ${stdout}`);
   });
 }
-
-var helptxt =
-  `\`\`\`
-<[+=-=-=-=+~{ ShadowBOT Commands }~+=-=-=-=+]>
-
-Shadowing Commands:
--------------------
-10) Shadow a player:      *spec <player>
-11) Stop shadowing:       *spec
-12) List of your shadows: *specs
-13) Remove your shadows:  *nospec
-14) Do Not Disturb (can't be shadowed): *dnd
-
-Nickname Commands:
-------------------
-20) Add/Remove !:       *! or *spectate
-21) Add/Remove (ST):    *st or *storytell
-22) Add/Remove (Co-ST): *cost or *co-st or *costorytell or *co-storytell
-23) Add/Remove (T):     *t or *travel
-24) Add/Remove ![LFG]:	*? or *lfg
-25) Remove previous tags: *p or *play
-26) Add/Remove [AFK]:      *afk
-27) Add/Remove [BRB]:      *brb
-28) Remove AFK/BRB tags: *back or *here
-29) Change nickname temporarily: *vote <name>
-2A) Back to original nickname:   *unvote
-2B) Add/Remove [N] (Optional tag for new players): *n
-\`\`\``
-var helptxt2 =
-  `\`\`\`
-Convenience Commands:
----------------------
-30) Set the link to the grim: *grim <url> or *link <url>
-31) Get the link to the grim: *grim or *link
-32) Create a poll with base 3 scripts, custom, homebrew (1=TB, 2=SNV, 3=BMR, C=Custom, H=Homebrew): *poll [123ch]
-33) Request that players go back to town: *gather (Storyteller only)
-34) Announce that nominations are open:   *noms   (Storyteller only)
-35) Get notified for next game:   *wait or *ng or *nextgame
-36) Show the ping list:      *wl or *waitlist or *list or *queue
-37) Leave the ping list:     *leave or *quit
-38) Ping players in queue (Only ST): *ping
-39) Link to the ST Feedback Form:    *feedback
-3A) Basics for beginners: *basics or *info
-3B) Travelers' Guide for beginners:  *travelers
-3C) Move a player to AFK channel (Only ST): *move <player mention>
-3D) Create a secret poll (anonymous voting): *sp <title> <options>
-3E) View secret poll results (adding a p displays the results publicly instead of privately): *results <p>
-3F) Ask Storyteller for a consultation (ST must click OK on the msg): *consult <optional text/mentions>
-3G) Show the saved list of commonly played custom scripts: *scripts or *script
-3H) Get the links to a specific custom script from the list: *get <id>
-\`\`\``
-var helptxt3 =
-  `\`\`\`
-3I) Show the saved list of commonly played teensy scripts: *teensies or *teensy
-3J) Get the links to a specific teensy script from the list: *get t <id>
-3K) Select a player from your current game at random: *randomplayer or *rp
-3L) Get the typical number of each role type (TF/Outsider/Minion/Demon): *count or *comp
-3M) Get information on a BOTC character: *role <character name>
-3N) Get information on a BOTC fable: *fable <character name> (or *fabled/fables)
-3P) Get the list of jinxes and jinxed characters: *jinxes or *jinx or *djinn
-
-Extra Commands:
----------------
-40) Tell a random joke:    *joke
-41) Compliment someone <3: *compliment @<player>
-42) Celebrate with style with a slow clap: *slowclap or *slow clap
-43) My rules of how to run Oops All Pithags: *oopsallpithags or *oops or *oap
-44) Crediting the cool people who helped: *credits
-
--=> For any Suggestions or Bug reports, msg me at LieutenantDV20
--=> Privacy Policy for the bot can be found at: https://botcubots.bearblog.dev/shadowbot/
-\`\`\``
-
-var helptxt_ecg =
-  `\`\`\`
-<[+=-=-=-=+~{ ShadowBOT Commands }~+=-=-=-=+]>
-
-Shadowing Commands:
--------------------
-10) Shadow a player:      *spec <player>
-11) Stop shadowing:       *spec
-12) List of your shadows: *specs
-13) Remove your shadows:  *nospec
-14) Do Not Disturb (can't be shadowed): *dnd
-
-Nickname Commands:
-------------------
-20) Add/Remove !:       *! or *spectate
-21) Add/Remove (ST):    *st or *storytell
-22) Add/Remove (Co-ST): *cost or *co-st or *costorytell or *co-storytell
-23) Add/Remove (T):     *t or *travel
-24) Add/Remove ![LFG]:	*? or *lfg
-25) Remove previous tags: *p or *play
-26) Add/Remove [AFK]:      *afk
-27) Add/Remove [BRB]:      *brb
-28) Remove AFK/BRB tags: *back or *here
-29) Change nickname temporarily: *vote <name>
-2A) Back to original nickname:   *unvote
-2B) Add/Remove [N] (Optional tag for new players): *n
-
-Town Control Commands:
----------------------
-A1) Move everyone from all day channels to cottages: *night
-A2) Move everyone from cottages to Town Square: *day
-A3) Move everyone from whisper channels to Town Square: *town
-A4) Set a timer for whispers(min: 30s, max: 8m): *timer <0.5 | 1 | 1.5 | ... | 8 >
-\`\`\``
-var helptxt_ecg2 =
-  `\`\`\`
-
-
-Convenience Commands:
----------------------
-30) Set the link to the grim: *grim <url> or *link <url>
-31) Get the link to the grim: *grim or *link
-32) Create a poll with base 3 scripts, custom, homebrew (1=TB, 2=SNV, 3=BMR, C=Custom, H=Homebrew): *poll [123ch]
-33) Create a poll with anonymous votes: *sp <title> <options> or *secretpoll <title> <options>
-34) Create a poll for Harry Potter houses: *sp <combination of s-h-r-g for each house>
-35) Privately view the results of a secret poll: *results <add p to view publicly instead>
-36) Mute all non-admins non-storytellers (Only ST and Admins): *ma or *muteall or *mute-all
-37) Unmute yourself if muted by mute-all (Anyone): *um or *unmute
-38) Unmute all users in your channel muted by mute-all (Anyone): *uma or *unmuteall or *unmute-all
-39) Basics for beginners: *basics or *info
-3A) Travelers' Guide for beginners:  *travelers
-3B) Ask Storyteller for a consultation (ST must click OK on the msg): *consult <optional text/mentions>
-3C) Show the saved list of commonly played custom scripts: *scripts or *script
-3D) Get the links to a specific custom script from the list: *get <id>
-3E) Show the saved list of commonly played teensy scripts: *teensies or *teensy
-3F) Get the links to a specific teensy script from the list: *get t <id>
-3G) Select a player from your current game at random: *randomplayer or *rp
-3H) Get the typical number of each role type (TF/Outsider/Minion/Demon): *count or *comp
-\`\`\``
-var helptxt_ecg3 =
-  `\`\`\`
-
-
-3I) Get information on a BOTC character: *role <character name>
-3J) Get information on a BOTC fable: *fable <character name> (or *fabled/fables)
-3K) Get the list of jinxes and jinxed characters: *jinxes or *jinx or *djinn
-
-Extra Commands:
-----------------
-40) Tell a random joke:    *joke
-41) Compliment someone <3: *compliment @<player>
-42) Celebrate with style with a slow clap: *slowclap or *slow clap
-43) My rules of how to run Oops All Pithags: *oopsallpithags or *oops or *oap
-44) Crediting the cool people who helped: *credits
-
--=> For any Suggestions or Bug reports, msg me at LieutenantDV20
--=> Privacy Policy for the bot can be found at: https://botcubots.bearblog.dev/shadowbot/
-\`\`\``
-
-var helptxt_other =
-  `\`\`\`
-<[+=-=-=-=+~{ ShadowBOT Commands }~+=-=-=-=+]>
-
-Shadowing Commands:
--------------------
-10) Shadow a player:      *spec <player>
-11) Stop shadowing:       *spec
-12) List of your shadows: *specs
-13) Remove your shadows:  *nospec
-14) Do Not Disturb (can't be shadowed): *dnd
-
-Nickname Commands:
-------------------
-20) Add/Remove !:       *! or *spectate
-21) Add/Remove (ST):    *st or *storytell
-22) Add/Remove (Co-ST): *cost or *co-st or *costorytell or *co-storytell
-23) Add/Remove (T):     *t or *travel
-24) Add/Remove ![LFG]:	*? or *lfg
-25) Remove previous tags: *p or *play
-26) Add/Remove [AFK]:      *afk
-27) Add/Remove [BRB]:      *brb
-28) Remove AFK/BRB tags: *back or *here
-29) Change nickname temporarily: *vote <name>
-2A) Back to original nickname:   *unvote
-2B) Add/Remove [N] (Optional tag for new players): *n
-
-Town Control Commands:
----------------------
-A1) Move everyone from all day channels to cottages: *night
-A2) Move everyone from cottages to Town Square: *day
-A3) Move everyone from whisper channels to Town Square: *town
-A4) Set a timer for whispers(min: 30s, max: 8m): *timer <0.5 | 1 | 1.5 | ... | 8 >
-\`\`\``
-var helptxt_other2 =
-  `\`\`\`
-
-
-Convenience Commands:
----------------------
-30) Set the link to the grim: *grim <url> or *link <url>
-31) Get the link to the grim: *grim or *link
-32) Create a poll with base 3 scripts, custom, homebrew (1=TB, 2=SNV, 3=BMR, C=Custom, H=Homebrew): *poll [123ch]
-33) Basics for beginners: *basics or *info
-34) Travelers' Guide for beginners:  *travelers
-35) Ask Storyteller for a consultation (ST must click OK on the msg): *consult <optional text/mentions>
-36) Create a secret poll (anonymous voting): *sp <title> <options>
-37) View secret poll results (adding a p displays the results publicly instead of privately): *results <p>
-38) Ask Storyteller for a consultation (ST must click OK on the msg): *consult <optional text/mentions>
-39) Show the saved list of commonly played custom scripts: *scripts or *script
-3A) Get the links to a specific custom script from the list: *get <id>
-3B) Show the saved list of commonly played teensy scripts: *teensies or *teensy
-3C) Get the links to a specific teensy script from the list: *get t <id>
-3D) Select a player from your current game at random: *randomplayer or *rp
-3E) Get the typical number of each role type (TF/Outsider/Minion/Demon): *count or *comp
-\`\`\``
-var helptxt_other3 =
-  `\`\`\`
-3F) Get information on a BOTC character: *role <character name>
-3G) Get information on a BOTC fable: *fable <character name> (or *fabled/fables)
-3H) Get the list of jinxes and jinxed characters: *jinxes or *jinx or *djinn
-
-Extra Commands:
----------------
-40) Tell a random joke:    *joke
-41) Compliment someone <3: *compliment @<player>
-42) Celebrate with style with a slow clap: *slowclap or *slow clap
-43) My rules of how to run Oops All Pithags: *oopsallpithags or *oops or *oap
-44) Crediting the cool people who helped: *credits
-
--=> For any Suggestions or Bug reports, msg me at LieutenantDV20
--=> Privacy Policy for the bot can be found at: https://botcubots.bearblog.dev/shadowbot/
-\`\`\``
-
-var oap_wel = `**Welcome to Oops All Pithags!**
-`
-
-var oap_gen =
-  `**The General Rules: (By LieutenantDV20)**
----------------------------------------------
-1- You can only be a: Good Player, Minion Player or Demon Player, and everyone has the Pithag token.
-2- Just like a regular game, there will be an evil team consisting of a Demon player and some Minion players, they start the game knowing each other. Everyone else who didn't learn an Evil Team is a good player.
-3- The Demon player is always The Demon regardless of their token, same for the Minion players and the Good players.
-4- The Good team wins if the Demon player dies.
-5- The Evil team wins if there are 2 or less players alive and the Demon Player is one of them.
-6- To resolve the Pithaggings and Kills at night, the Storyteller will assign each player a random night order at the start of the game before deciding the grim.
-7- The Demon Player registers as Evil and as a Demon to all abilities, regardless of their token. Minion Players register as Evil and as Minions.
-8- Good Players register as Good and as Townsfolk only.
-9- After two nights of no deaths, the following night will have arbitrary deaths.
----------------------------------------------`
-
-var oap_no = `**The Night Order: (By LieutenantDV20)**
----------------------------------------------
-**Night One Order:** Same as below, but the Pithaggings happen first, everything else remains the same.
-**Other Nights Order:**
-    Philosopher
-    Snakecharmer
-    Poisoner
-    Courtier
-    (Other Poisoning, Drunkness and Protection roles)
-    Exorcist
-    Preacher
-    Demon kills (Decided by the assigned order)
-    Pithaggings (Decided by the assigned order)
-    Minion Abilities
-    All the other abilities
----------------------------------------------`
-
-var oap_ban = `**Banned Characters: (By LieutenantDV20)**
----------------------------------------------
-Riot
-Legion
-Leviathon
-Lil Monsta
-Bounty Hunter
-Sage
-Mastermind
-Spy
-Widow
-Heretic
-Athiest
-Damsel
-Lycanthrope
-Balloonist
-Village Idiot
----------------------------------------------`
-
-var oap_jinx = `**Jinxes: (By LieutenantDV20)**
----------------------------------------------
-- **Courtier** can't pick the **Pithag**.
-- **Engineer** can only pick what the **Demon Player's** role becomes. (It's like a once per game Pithag, but it targets the Demon Player)
-- **Snakecharmer** activates when picking the **Demon Player**, the players would swap tokens and alignments as expected, moving the Demonhood.
-- The **Demon Player** and the **Minion Players cannot switch alignments** in any way.
-- It is allowed to create an **Evil Politician**. (However from the jinx above, you can see that it's pointless for evil).
-- **Fanggu** demon doesn't jump, since no players register as an outsider.
-- Roles that are mentioned together in the Night Order (such as pithagging or killing roles) resolve according to the assigned random night order.
-- When a character with passive droison is created **(e.g: Nodashii, Puzzlemaster, etc)**. Their droison effect goes into the night order with other droison characters.
-- The Good Team wins upon the death of the Demon Player even if they had the **Zombuul** token.
-- If a Final 3 includes a **dead Zombuul**, then the Evil Team wins unless there's an alive Good Player.
----------------------------------------------`
