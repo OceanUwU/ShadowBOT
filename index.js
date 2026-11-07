@@ -51,8 +51,6 @@ var move_blacklist = []
 
 var secret_polls = []
 
-var nicks = []
-
 const moonsties_id = "1273651260003844108";
 const shovel_id = "1146523171999207465";
 
@@ -851,33 +849,6 @@ client.on('messageCreate',
         delete stdic[msg.author.username]
         await respond(msg, "```You weren't shadowing anyone```")
       }
-    }
-    else if (msg.content.trim().toLowerCase().substring(0, 6) === "*vote ") {
-      let name = msg.content.trim().substring(6)
-      let fnd = -1
-      for (let i = 0; i < nicks.length; i++) {
-        if (nicks[i][0] == msg.author.username) {
-          fnd = i
-          break
-        }
-      }
-      if (fnd == -1) {
-        nicks.push([msg.author.username, baseName])
-      }
-      await rename(msg, name);
-      await new Promise(r => setTimeout(r, 1000));
-      await msg.delete().catch(e => { msg_user(lieu_id, "" + e); })
-    }
-    else if (msg.content.trim().toLowerCase() === "*unvote") {
-      for (let i = 0; i < nicks.length; i++) {
-        if (nicks[i][0] == msg.author.username) {
-          await rename(msg, nicks[i][1]);
-          nicks.splice(i, 1)
-          return
-        }
-      }
-      await new Promise(r => setTimeout(r, 1000));
-      await msg.delete().catch(e => { msg_user(lieu_id, "" + e); })
     }
     else if (msg.content.trim().toLowerCase() === "*night") {
       if (running_cycle) {

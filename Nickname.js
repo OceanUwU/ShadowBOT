@@ -13,9 +13,14 @@ class Nickname {
         let base = Nickname.baseName(member);
         if (to == base)
             return false;
-        if (to.length >= 32)
+        if (to.length > 32)
             return "This change would make your nickname longer than the maximum length!";
-        return member.setNickname(to);
+        try {
+            await member.setNickname(to);
+        } catch (e) {
+            return "Could not set that as your nickname. Did you use invalid special characters?";
+        }
+        return true;
     }
 
     static baseName(member) {
@@ -33,6 +38,11 @@ class Nickname {
         name = Nickname.removeSTTag(name);
         name = Nickname.removeCoSTTag(name);
         return name;
+    }
+
+    static isPlayer(member) {
+        let name = this.baseName(member);
+        return !Nickname.hasSTOrCoSTTag(name) && !Nickname.hasSpecTag(name);
     }
 
     static addSpecTag(name) {

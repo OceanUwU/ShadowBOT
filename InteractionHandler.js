@@ -1,4 +1,4 @@
-import discord, { SlashCommandBuilder, Client, ContextMenuCommandBuilder, ApplicationCommandType, ChatInputCommandInteraction, ContextMenuCommandInteraction, UserContextMenuCommandInteraction, SlashCommandSubcommandBuilder, AutocompleteInteraction } from 'discord.js';
+import discord, { SlashCommandBuilder, Client, ContextMenuCommandBuilder, ApplicationCommandType, ChatInputCommandInteraction, ContextMenuCommandInteraction, UserContextMenuCommandInteraction, SlashCommandSubcommandBuilder, AutocompleteInteraction, ButtonInteraction } from 'discord.js';
 
 
 class InteractionHandler {
@@ -10,6 +10,7 @@ class InteractionHandler {
     static contextMenuCommandHandlers = {};
     static userContextMenuCommandHandlers = {};
     static autocompleteHandlers = {};
+    static buttonHandlers = {};
     static initialized = false;
 
     /**
@@ -67,6 +68,15 @@ class InteractionHandler {
         this.autocompleteHandlers[name] = callback;
     }
 
+    
+    /**
+     * @param {string} name 
+     * @param {function(ButtonInteraction):void} callback
+     */
+    static registerButton(id, callback) {
+        this.buttonHandlers[id] = callback;
+    }
+
     /**
      * @param {discord.Interaction} interaction 
      */
@@ -101,7 +111,8 @@ class InteractionHandler {
                 if (this.autocompleteHandlers.hasOwnProperty(commandName))
                     await this.autocompleteHandlers[commandName](interaction, option);
             } else if (interaction.isButton()) {
-
+                if (this.buttonHandlers.hasOwnProperty(interaction.customId))
+                    await this.buttonHandlers[interaction.customId](interaction);
             } else if (interaction.isSelectMenu()) {
 
             }

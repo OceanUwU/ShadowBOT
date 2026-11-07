@@ -1,21 +1,24 @@
-import { MessageFlags, SlashCommandBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, SlashCommandBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import InteractionHandler from '../InteractionHandler.js';
 import Nickname from '../Nickname.js';
 
 async function changeNickname(interaction, to, successMessage) {
     let result = await Nickname.change(interaction.member, to);
-    if (typeof result == 'string')
-        return await interaction.editReply(result);
+    if (typeof result == 'string') {
+        await interaction.editReply(result);
+        return result;
+    }
     await interaction.editReply(successMessage);
+    return result;
 }
 
 async function toggleTag(interaction, has, add, remove, typeName) {
     await interaction.deferReply({ flags: interaction.options.getBoolean("loud") === true ? 0 : MessageFlags.Ephemeral });
     let name = Nickname.baseName(interaction.member);
     if (has(name))
-        await changeNickname(interaction, remove(name), typeName + " tag removed.");
+        return await changeNickname(interaction, remove(name), typeName + " tag removed.");
     else
-        await changeNickname(interaction, add(name), typeName + " tag added.");
+        return await changeNickname(interaction, add(name), typeName + " tag added.");
 }
 
 InteractionHandler.registerCommandGroup(new SlashCommandBuilder()
@@ -147,27 +150,49 @@ InteractionHandler.registerCommandGroup(new SlashCommandBuilder()
     ],
 ]);
 
+const nicks = {};
+
 InteractionHandler.registerSlashCommand(new SlashCommandBuilder()
     .setName("vote")
     .setDescription("Change your nickname to vote for a player")
     .addStringOption(option => option
         .setName("name")
-        .setDescription("The name to vote for")
+        .setDescription("The name of the player to vote for")
         .setRequired(true)
+        .setMaxLength(32)
     ),
 
     async interaction => {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+        let originalName = Nickname.baseName(interaction.member);
+        let result = await changeNickname(interaction, interaction.options.getString("name", true),
+            {
+                content: "Your nickname was updated to reflect your vote.",
+                components: [new ActionRowBuilder().addComponents(new ButtonBuilder()
+                    .setCustomId("unvote")
+                    .setLabel("Remove vote")
+                    .setStyle(ButtonStyle.Primary))]
+        });
+        if (result === true)
+            nicks[interaction.user.id] = originalName;
     }
 );
 
+async function unvote(interaction) {
+    if (!nicks.hasOwnProperty(interaction.user.id))
+        return await interaction.editReply();
+    await changeNickname(interaction, nicks[interaction.user.id], "Vote removed.");
+    delete nicks[interaction.user.id];
+}
+
+InteractionHandler.registerButton("unvote", async interaction => await unvote(interaction));
+
 InteractionHandler.registerSlashCommand(new SlashCommandBuilder()
     .setName("unvote")
-    .setDescription("Remove your nickname set by /vote"),
+    .setDescription("Revert your nickname to what it was before you used /vote"),
 
     async interaction => {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
+        await unvote(interaction);
     }
 );
