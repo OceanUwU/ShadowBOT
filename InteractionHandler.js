@@ -3,6 +3,7 @@ import discord, { SlashCommandBuilder, Client, ContextMenuCommandBuilder, Applic
 
 class InteractionHandler {
     static commands = [];
+    static subcommands = [];
     static contextMenuCommands = [];
     static userContextMenuCommands = [];
     static commandHandlers = {};
@@ -31,7 +32,7 @@ class InteractionHandler {
         for (let subcommand of subcommands) {
             commandBuilder.addSubcommand(subcommand[0]);
             subcommandMap[subcommand[0].name] = subcommand[1];
-            this.commands.push([subcommand[0], subcommand[1]]);
+            this.subcommands.push([subcommand[0], subcommand[1]]);
         }
         this.commands.push([commandBuilder, subcommandMap]);
     }
@@ -69,7 +70,7 @@ class InteractionHandler {
     /**
      * @param {discord.Interaction} interaction 
      */
-    static handle(interaction) {
+    static async handle(interaction) {
         try {
             if (!this.initialized)
                 throw new Error("Cannot handle interactions before initialization!");
@@ -78,16 +79,16 @@ class InteractionHandler {
                 if (this.commandHandlers.hasOwnProperty(interaction.commandId)) {
                     let handler = this.commandHandlers[interaction.commandId];
                     if (typeof(handler) == 'function')
-                        handler(interaction)
+                        await handler(interaction)
                     else
-                        handler[interaction.options.getSubcommand(true)](interaction)
+                        await handler[interaction.options.getSubcommand(true)](interaction)
                 }
             } else if (interaction.isContextMenuCommand()) {
                 if (this.contextMenuCommandHandlers.hasOwnProperty(interaction.commandId))
-                    this.contextMenuCommandHandlers[interaction.commandId](interaction);
+                    await this.contextMenuCommandHandlers[interaction.commandId](interaction);
             } else if (interaction.isUserContextMenuCommand()) {
                 if (this.userContextMenuCommandHandlers.hasOwnProperty(interaction.commandId))
-                    this.userContextMenuCommandHandlers[interaction.commandId](interaction);
+                    await this.userContextMenuCommandHandlers[interaction.commandId](interaction);
             } else if (interaction.isAutocomplete()) {
                 let commandName = interaction.commandName;
                 let subcommand = interaction.options.getSubcommand(false);
@@ -98,7 +99,7 @@ class InteractionHandler {
                     return;
                 commandName += "/" + option.name;
                 if (this.autocompleteHandlers.hasOwnProperty(commandName))
-                    this.autocompleteHandlers[commandName](interaction, option);
+                    await this.autocompleteHandlers[commandName](interaction, option);
             } else if (interaction.isButton()) {
 
             } else if (interaction.isSelectMenu()) {
@@ -117,8 +118,9 @@ class InteractionHandler {
         if (this.initialized)
             throw new Error("Cannot initialize twice!");
 
-        let builders = [...this.commands, ...this.contextMenuCommands, ...this.userContextMenuCommands].map(c => c[0]);
-        
+        let builders = [...this.commands, ...this.contextMenuCommands, ...this.userContextMenuCommands].map(c => c[0]);     
+        this.commands = [...this.commands, ...this.subcommands];
+        this.subcommands = [];   
 
         let registered;
 

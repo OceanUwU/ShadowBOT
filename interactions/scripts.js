@@ -100,13 +100,9 @@ InteractionHandler.registerCommandGroup(new SlashCommandBuilder()
 ]);
 
 InteractionHandler.registerAutocomplete("script/full/name", async (interaction, option) => {
-    try {
-        interaction.respond(await topScriptResults("Full", option.value));
-    } catch (e) {}
+    await interaction.respond(await topScriptResults("Full", option.value));
 });
 
 InteractionHandler.registerAutocomplete("script/teensyville/name", async (interaction, option) => {
-    try {
-        await interaction.respond(await topScriptResults("Teensyville", option.value));
-    } catch (e) {}
+    await interaction.respond(await topScriptResults("Teensyville", option.value));
 });
