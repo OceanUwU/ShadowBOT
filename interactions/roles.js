@@ -5,6 +5,7 @@ import RoleData from '../RoleData.js';
 InteractionHandler.registerSlashCommand(new SlashCommandBuilder()
     .setName("role")
     .setDescription("Search for info on a role")
+    .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel)
     .addStringOption(option => option
         .setName("role")
         .setDescription("The role to search for")

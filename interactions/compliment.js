@@ -31,7 +31,6 @@ const insults = [", Are you the drunk? or are you just normally like this?*",
 InteractionHandler.registerSlashCommand(new SlashCommandBuilder()
     .setName("compliment")
     .setDescription("Compliments a user")
-    .setContexts(InteractionContextType.Guild)
     .addUserOption(option => option
         .setName("user")
         .setDescription("The user to compliment")
@@ -50,7 +49,6 @@ InteractionHandler.registerSlashCommand(new SlashCommandBuilder()
 InteractionHandler.registerSlashCommand(new SlashCommandBuilder()
     .setName("insult")
     .setDescription("Insults a user")
-    .setContexts(InteractionContextType.Guild)
     .addUserOption(option => option
         .setName("user")
         .setDescription("The user to insult")

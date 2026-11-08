@@ -56,6 +56,7 @@ async function getScript(interaction, type) {
 
 InteractionHandler.registerCommandGroup(new SlashCommandBuilder()
     .setName("script")
+    .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel)
     .setDescription("Search for a script from botcscripts.com"),
 [
     [

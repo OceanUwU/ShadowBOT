@@ -1,4 +1,4 @@
-import { AutocompleteInteraction, EmbedBuilder, Role, SlashCommandBuilder } from "discord.js";
+import { AutocompleteInteraction, EmbedBuilder, InteractionContextType, Role, SlashCommandBuilder } from "discord.js";
 import InteractionHandler from "../InteractionHandler.js";
 import fetch from 'node-fetch';
 import RoleData from "../RoleData.js";
@@ -49,6 +49,7 @@ async function getJinxes() {
 InteractionHandler.registerSlashCommand(new SlashCommandBuilder()
     .setName("jinx")
     .setDescription("Search for a Djinn jinx")
+    .setContexts(InteractionContextType.BotDM, InteractionContextType.Guild, InteractionContextType.PrivateChannel)
     .addStringOption(option => option
         .setName("role")
         .setDescription("The role to find a jinx for")
